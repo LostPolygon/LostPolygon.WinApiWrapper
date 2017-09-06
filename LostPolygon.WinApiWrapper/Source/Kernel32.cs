@@ -46,6 +46,15 @@ namespace LostPolygon.WinApiWrapper {
             [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool CloseHandle(IntPtr hObject);
 
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool AllocConsole();
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool FreeConsole();
+
+            [DllImport("kernel32", SetLastError = true)]
+            public static extern bool AttachConsole(int dwProcessId);
+
             #endregion Functions
 
             #region Enums

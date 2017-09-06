@@ -19,7 +19,9 @@ namespace LostPolygon.WinApiWrapper {
 
             #region Delegates
 
-            public delegate bool EnumProc(IntPtr hwnd, int lParam);
+            public delegate bool EnumProc(IntPtr hwnd, IntPtr lParam);
+
+            public delegate bool EnumProcRef(IntPtr hwnd, ref IntPtr lParam);
 
             public delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -321,10 +323,10 @@ namespace LostPolygon.WinApiWrapper {
             [DllImport("user32.dll")]
             public static extern int SetWindowText(IntPtr hwnd, string str);
 
-            [DllImport("User32.dll")]
+            [DllImport("User32.dll", CharSet = CharSet.Unicode)]
             public static extern int GetWindowTextLength(IntPtr hWnd);
 
-            [DllImport("user32.dll")]
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
             public static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int maxLength);
 
             [DllImport("User32.Dll")]
@@ -343,6 +345,9 @@ namespace LostPolygon.WinApiWrapper {
             [DllImport("user32.dll")]
             public static extern int GetWindow(IntPtr hwnd, int flag);
 
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+            public static extern int RegisterWindowMessage(string lpString);
+
             [DllImport("User32.dll")]
             public static extern void PostQuitMessage(int nExitCode);
 
@@ -350,7 +355,16 @@ namespace LostPolygon.WinApiWrapper {
             public static extern IntPtr SendMessage(IntPtr hwnd, MessageType Msg, IntPtr wParam, IntPtr lParam);
 
             [DllImport("User32.dll")]
+            public static extern IntPtr SendMessage(IntPtr hwnd, MessageType Msg, IntPtr wParam, string lParam);
+
+            [DllImport("user32.dll")]
+            public static extern int SendMessageTimeout(IntPtr hwnd, int msg, int wParam, int lParam, int fuFlags, int uTimeout, out int lpdwResult);
+
+            [DllImport("User32.dll")]
             public static extern IntPtr PostMessage(IntPtr hwnd, MessageType Msg, IntPtr wParam, IntPtr lParam);
+
+            [DllImport("User32.dll")]
+            public static extern IntPtr PostMessage(IntPtr hwnd, MessageType Msg, IntPtr wParam, string lParam);
 
             [DllImport("user32.dll")]
             public static extern bool TranslateMessage([In] ref MSG lpMsg);
@@ -394,16 +408,31 @@ namespace LostPolygon.WinApiWrapper {
             public static extern int ShowWindow(IntPtr hwnd, ShowWindowCommands nCmdShow);
 
             [DllImport("user32")]
-            public static extern int EnumWindows(EnumProc cbf, int lParam);
+            public static extern int EnumWindows(EnumProc cbf, IntPtr lParam);
 
             [DllImport("user32")]
-            public static extern int EnumChildWindows(IntPtr hwnd, EnumProc cbf, int lParam);
+            public static extern int EnumChildWindows(IntPtr hwnd, EnumProc cbf, IntPtr lParam);
+
+            [DllImport("user32")]
+            public static extern int EnumChildWindows(IntPtr hwnd, EnumProcRef cbf, IntPtr lParam);
+
+            [DllImport("user32")]
+            public static extern int EnumChildWindows(IntPtr hwnd, EnumProc cbf, ref IntPtr lParam);
+
+            [DllImport("user32")]
+            public static extern int EnumChildWindows(IntPtr hwnd, EnumProcRef cbf, ref IntPtr lParam);
+
+            [DllImport("user32.dll")]
+            public static extern bool EnumThreadWindows(uint dwThreadId, EnumProc cbf, IntPtr lParam);
 
             [DllImport("user32.dll")]
             public static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint lpdwProcessId);
 
-            [DllImport("User32.dll", EntryPoint = "EnumThreadWindows")]
-            public static extern bool EnumThreadWindows(uint dwThreadId, EnumProc cbf, int lParam);
+            [DllImport("user32.dll")]
+            public static extern bool IsWindowVisible(IntPtr hwnd);
+
+            [DllImport("user32.dll")]
+            public static extern bool IsIconic(IntPtr hwnd);
 
             [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
             public static extern bool UpdateLayeredWindow(
